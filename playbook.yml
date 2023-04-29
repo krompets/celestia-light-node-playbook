@@ -1,0 +1,10 @@
+---
+
+- name: Install Celestia Light Node
+  hosts: all
+  become: yes
+  roles:
+    - install_dependencies
+    - install_go
+    - install_celestia_node
+    - init_and_start_celestia_node
