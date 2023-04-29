@@ -1,0 +1,22 @@
+---
+- name: Clone Celestia Node repository
+  git:
+    repo: https://github.com/celestiaorg/celestia-node.git
+    dest: "{{ ansible_user_dir }}/celestia-node"
+    version: "v0.9.1"
+    force: yes
+
+- name: Build Celestia Node
+  shell: |
+    cd {{ ansible_user_dir }}/celestia-node
+    make build
+
+- name: Install Celestia Node
+  shell: |
+    cd {{ ansible_user_dir }}/celestia-node
+    make install
+
+- name: Generate Celestia Node key
+  shell: |
+    cd {{ ansible_user_dir }}/celestia-node
+    make cel-key

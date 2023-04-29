@@ -1,0 +1,39 @@
+---
+- name: Set Go version
+  set_fact:
+      go_version: "1.20.2"
+
+- name: Download Go archive
+  get_url:
+      url: "https://golang.org/dl/go{{ go_version }}.linux-amd64.tar.gz"
+      dest: "{{ ansible_user_dir }}/go{{ go_version }}.linux-amd64.tar.gz"
+
+- name: Remove previous Go installation
+  become: true
+  file:
+      path: "/usr/local/go"
+      state: absent
+
+- name: Extract Go archive
+  become: true
+  unarchive:
+      src: "{{ ansible_user_dir }}/go{{ go_version }}.linux-amd64.tar.gz"
+      dest: "/usr/local"
+      extra_opts: "--no-same-owner"
+
+- name: Remove Go archive
+  become: true
+  file:
+      path: "{{ ansible_user_dir }}/go{{ go_version }}.linux-amd64.tar.gz"
+      state: absent
+
+- name: Add Go binaries to PATH
+  lineinfile:
+      path: "{{ ansible_user_dir }}/.bashrc"
+      line: "export PATH=$PATH:/usr/local/go/bin:{{ ansible_user_dir }}/go/bin"
+      state: present
+      create: yes
+      insertafter: EOF
+
+- name: Source bashrc
+  shell: source {{ ansible_user_dir }}/.bashrc
